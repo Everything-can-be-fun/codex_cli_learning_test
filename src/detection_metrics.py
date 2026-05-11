@@ -33,3 +33,13 @@ def recall(tp, fn):
     if tp + fn == 0:
         return 0.0
     return tp / (tp + fn)
+
+
+def f1_score(tp, fp, fn):
+    p = precision(tp, fp)
+    r = recall(tp, fn)
+
+    if p + r == 0:
+        return 0.0
+
+    return 2 * p * r / (p + r)
