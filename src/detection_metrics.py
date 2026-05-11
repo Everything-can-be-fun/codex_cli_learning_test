@@ -43,3 +43,31 @@ def f1_score(tp, fp, fn):
         return 0.0
 
     return 2 * p * r / (p + r)
+
+
+def count_detections(pred_boxes, gt_boxes, iou_threshold=0.5):
+    matched_gt_indices = set()
+    tp = 0
+    fp = 0
+
+    for pred_box in pred_boxes:
+        best_iou = 0.0
+        best_gt_index = None
+
+        for gt_index, gt_box in enumerate(gt_boxes):
+            if gt_index in matched_gt_indices:
+                continue
+
+            current_iou = iou(pred_box, gt_box)
+            if current_iou > best_iou:
+                best_iou = current_iou
+                best_gt_index = gt_index
+
+        if best_iou >= iou_threshold and best_gt_index is not None:
+            tp += 1
+            matched_gt_indices.add(best_gt_index)
+        else:
+            fp += 1
+
+    fn = len(gt_boxes) - tp
+    return {"tp": tp, "fp": fp, "fn": fn}
